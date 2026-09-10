@@ -21,15 +21,19 @@ package org
 // and unsimplifing some code that Python allows, but Kotlin doesn't.
 
 fun dailyTemperatures(temperatures: List<Int>): MutableList<Int> {
-    val stack = mutableListOf<Int>()
-    val ret = MutableList(temperatures.count()) {0}
+    val stack = mutableListOf<Int>() // setting up the monotonic stack
+    val ret = MutableList(temperatures.count()) {0} // list to be returned
+
+    // iterate through each list element
     for (i in 0..temperatures.size - 1) {
+        // if the current temperature is higher than the
+        // temperature at the top of the stack, run
         while (stack.isNotEmpty() && temperatures[stack.last()] < temperatures[i]) {
-            val idx = stack.last()
-            stack.remove(stack.last())
-            ret[idx] = i - idx
+            val idx = stack.last() // save the top stack element (index)
+            stack.remove(stack.last()) // pop the last stack element
+            ret[idx] = i - idx // calculate the number of days until idx's next hottest day
         }
-        stack.add(i)
+        stack.add(i) // append the stack
     }
     return ret
 }
