@@ -44,6 +44,9 @@ class DLL<T>: LinkedList<T> {
     private var head: Element<T>? = null
     private var tail: Element<T>? = null
 
+    /**
+     * Push an item to the front of the linked list. Update head and tail accordingly.
+     */
     override fun pushFront(data: T) {
         val newHead = Element(data, head, null)
         head?.prev = newHead
@@ -54,6 +57,9 @@ class DLL<T>: LinkedList<T> {
         }
     }
 
+    /**
+     * Push an item to the back of the linked list. Update head and tail accordingly.
+     */
     override fun pushBack(data: T) {
         val newTail = Element(data, null, tail)
         tail?.next = newTail
@@ -64,6 +70,9 @@ class DLL<T>: LinkedList<T> {
         }
     }
 
+    /**
+     * Delete/unlink the front element of the list. Return the deleted element.
+     */
     override fun popFront(): T? {
         val ret = head?.data
         val newHead = head?.next
@@ -76,6 +85,9 @@ class DLL<T>: LinkedList<T> {
         return ret
     }
 
+    /**
+     * Delete/unlink the back element of the list. Return the deleted element.
+     */
     override fun popBack(): T? {
         val ret = tail?.data
         val newTail = tail?.prev
@@ -88,19 +100,31 @@ class DLL<T>: LinkedList<T> {
         return ret
     }
 
+    /**
+     * Return the value/data of the front element
+     */
     override fun peekFront(): T? {
         return head?.data
     }
 
+    /**
+     * Return the value/data of the back element
+     */
     override fun peekBack(): T? {
         return tail?.data
     }
 
+    /**
+     * Return a boolean value of whether the list is empty
+     */
     override fun isEmpty(): Boolean {
         return head == null
     }
 }
 
+/**
+ * Unit tests for doubly linked list/DLL
+ */
 fun DLLUnitTests() {
     val links = DLL<Int>()
     assert(links.isEmpty())
@@ -124,7 +148,8 @@ fun DLLUnitTests() {
     assert(links.peekBack() == 1)
 
     assert(links.popFront() == 7)
-    assert((links.peekBack() == links.peekFront()) && (links.peekFront() == 1))
+    assert(links.peekBack() == links.peekFront())
+    assert((links.peekFront() == 1))
     assert(links.popBack() == 1)
     assert(links.isEmpty())
 
@@ -135,23 +160,39 @@ fun DLLUnitTests() {
 class Stack<T> {
     val stack = DLL<T>()
 
+    /**
+     * Push an element to the top of the stack
+     */
     fun push(data: T) {
         stack.pushFront(data)
     }
 
+    /**
+     * Remove the top element of the stack
+     * Return the removed element
+     */
     fun pop(): T? {
         return stack.popFront()
     }
 
+    /**
+     * Return the element at the top of the stack
+     */
     fun peek(): T? {
         return stack.peekFront()
     }
 
+    /**
+     * Return a boolean value of whether the stack is empty
+     */
     fun isEmpty(): Boolean {
         return stack.isEmpty()
     }
 }
 
+/**
+ * Unit tests for Stack
+ */
 fun stackUnitTests() {
     val stack = Stack<Int>()
     assert(stack.isEmpty())
@@ -175,23 +216,39 @@ fun stackUnitTests() {
 class Queue<T> {
     val queue = DLL<T>()
 
+    /**
+     * Push an element to the back of the queue
+     */
     fun enqueue(data: T) {
-        queue.pushFront(data)
+        queue.pushBack(data)
     }
 
+    /**
+     * Remove an element from the front of the queue
+     * Return the removed value
+     */
     fun dequeue(): T? {
-        return queue.popBack()
+        return queue.popFront()
     }
 
+    /**
+     * Return the element at the front of the queue
+     */
     fun peek(): T? {
-        return queue.peekBack()
+        return queue.peekFront()
     }
 
+    /**
+     * Return a boolean value of whether the queue is empty
+     */
     fun isEmpty(): Boolean {
         return queue.isEmpty()
     }
 }
 
+/**
+ * Unit tests for Queue
+ */
 fun queueUnitTests() {
     val queue = Queue<Int>()
     assert(queue.isEmpty())
@@ -209,6 +266,10 @@ fun queueUnitTests() {
 }
 
 // Exercise 3
+/**
+ * A function that takes a stack a returns a
+ * stack with its elements/contents reversed.
+ */
 fun <T> reverseStack(stack: Stack<T>): Stack<T> {
     val newStack: Stack<T> = Stack()
     while (!stack.isEmpty()) {
@@ -217,6 +278,9 @@ fun <T> reverseStack(stack: Stack<T>): Stack<T> {
     return newStack
 }
 
+/**
+ * Unit tests for reverseStack
+ */
 fun reverseStackUnitTests() {
     // I don't know if this is a requirement,
     // but it is a sanity test for me.
@@ -238,21 +302,29 @@ fun reverseStackUnitTests() {
 }
 
 // Exercise 4
+/**
+ * A function that returns a boolean value of whether a
+ * string of parenthesis, brackets, and curly brackets
+ * are ordered correctly/properly
+ */
 fun validParentheses(s: String): Boolean {
     val complement: Map<Char?, Char?> = mapOf('(' to ')', '{' to '}', '[' to ']')
     val stack = Stack<Char>()
 
     for (i in s) {
         if (!stack.isEmpty() && (i == complement[stack.peek()])) {
-            stack.pop()
+            stack.pop() // pop top element of the stack if it is equal to its complement
         }
         else {
             stack.push(i)
         }
     }
-    return stack.isEmpty()
+    return stack.isEmpty() // valid cases should result in empty stacks
 }
 
+/**
+ * Unit tests for validParenthesis
+ */
 fun validParenthesisUnitTests() {
     assert(validParentheses("()"))
     assert(!validParentheses("("))
@@ -265,20 +337,27 @@ fun validParenthesisUnitTests() {
 }
 
 // Exercise 5
+/**
+ * A function that creates/returns a copy of a stack, retaining
+ * the inputted stack's elements and order.
+ */
 fun <T> copyStack(stack: Stack<T>): Stack<T> {
 //    return reverseStack(reverseStack(stack)) I feel like you wanted me to use a queue
     val newStack = reverseStack(stack)
     val queue = Queue<T>()
     while (!newStack.isEmpty()) {
-        queue.enqueue(newStack.pop()!!)
+        queue.enqueue(newStack.pop()!!) // enqueue the popped element of newStack
     }
     while (!queue.isEmpty()) {
-        newStack.push(queue.dequeue()!!)
+        newStack.push(queue.dequeue()!!) // push the dequeued element of the queue
     }
 
     return newStack
 }
 
+/**
+ * Unit tests for copyStack
+ */
 fun copyStackUnitTests() {
     val s: Stack<Int> = Stack()
     for (i in 1..10) {
@@ -294,6 +373,9 @@ fun copyStackUnitTests() {
     println("copyStack passes all tests!")
 }
 
+/**
+ * main function that runs unit tests
+ */
 fun main() {
     DLLUnitTests()
     stackUnitTests()
