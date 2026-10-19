@@ -251,6 +251,42 @@ fun matrixUnitTests() {
         }
     }
 
+    val a4 = Matrix(4)
+    val b4 = Matrix(4)
+    for (r in 0 until 4) {
+        for (c in 0 until 4) {
+            a4[r, c] = (r + c + 1).toDouble()
+            b4[r, c] = (r * c + 2).toDouble()
+        }
+    }
+    val mult4 = a4.multiply(b4)
+    val strassen4 = a4.strassenMultiply(b4)
+    assert(mult4 != null)
+    assert(strassen4 != null)
+    for (r in 0 until 4) {
+        for (c in 0 until 4) {
+            assert(strassen4!![r, c] == mult4!![r, c])
+        }
+    }
+
+    val a8 = Matrix(8)
+    val b8 = Matrix(8)
+    for (r in 0 until 8) {
+        for (c in 0 until 8) {
+            a8[r, c] = (r - c).toDouble()
+            b8[r, c] = (r + c + 1).toDouble()
+        }
+    }
+    val mult8 = a8.multiply(b8)
+    val strassen8 = a8.strassenMultiply(b8)
+    assert(mult8 != null)
+    assert(strassen8 != null)
+    for (r in 0 until 8) {
+        for (c in 0 until 8) {
+            assert(strassen8!![r, c] == mult8!![r, c])
+        }
+    }
+
     val m7 = Matrix(3)
     assert(m1 + m7 == null)
     assert(m1 - m7 == null)
@@ -266,11 +302,9 @@ fun matrixTimings() {
     val sRunTimes = mutableListOf<Double>()
 
     for (size in sizes) {
-        // Create two unique matrices for the current size
         val A = Matrix(size)
         val B = Matrix(size)
 
-        // Populate with random values (e.g., between -10.0 and 10.0)
         for (r in 0 until size) {
             for (c in 0 until size) {
                 A[r, c] = Random.nextDouble(-10.0, 10.0)
